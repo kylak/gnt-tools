@@ -5,7 +5,7 @@
 //! ```
 //! use gnt_tools::core_text;
 //!
-//! let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
+//! let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
 //!          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
 //!          καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
 //!          οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
@@ -22,16 +22,17 @@ use unicode_normalization::UnicodeNormalization;
 /// The function gives the core text of a greek new testament critical edition.  
 /// It might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
 ///
-/// In concrete terms, it remove diacritic signs, change nu bars to nu letter, remove any character that is not in the greek alphabet, change all sigmas to lunar sigma, and puts all greek letters in lowercase.
+/// In concrete terms, it remove diacritic signs, remove any character that is not in the greek alphabet, change all sigmas to lunar sigma, and puts all greek letters in lowercase.
 ///
-/// Also, this function : 
+/// So this function : 
 /// - does not replace nomina sacras (e.g., κϲ) by their non-abreviated form (resp. κυριοϲ), nor words (e.g., κύριος) by their nomina sacras form (when a nomina sacra form exists) (resp. κϲ).
 /// - is made to delete any character used to encode nomina sacras (e.g., '|', or '(' and ')'), hence |κς| will give κϲ.
+/// - does delete all 'ˉ' characters (so παραβολὴˉ becomes παραβολη, not παραβολην)
 /// # Example : 
 /// ```
 /// use gnt_tools::core_text;
 ///
-/// let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
+/// let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
 ///          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
 ///          καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
 ///          οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
@@ -60,7 +61,8 @@ pub fn core_text(mut s : String) -> String {
 fn replace (mut s : String) -> String {
     
     // We remplace any "invisible nu" by a "true one". ------------------
-    s = s.replace("ˉ", "ν");
+    // EDIT : not anymore (because it's not easy to manage), but I hope later.
+    // s = s.replace("ˉ", "ν");
     
     // We change any uppercase letter to lowercase. ---------------------
     s = s.to_lowercase();
@@ -89,7 +91,7 @@ mod tests {
     #[test]
     fn test_core_text() {
    
-        let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
+        let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
             ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
             καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
             οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
