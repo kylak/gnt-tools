@@ -1,11 +1,11 @@
-//! This crate has been created in order to be a tool box for studying the greek new testament.
+//! Tools to help studying the greek new testament.
 //! The crate is provided AS-IS.
 //! # Examples
 //! 
 //! ```
 //! use gnt_tools::core_text;
 //!
-//! let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
+//! let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
 //!          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
 //!          καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
 //!          οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
@@ -19,23 +19,19 @@
 
 use unicode_normalization::UnicodeNormalization;
 
-/*
-   If one has developped a greedy function (cf. below),
-   this format function would still may be useful to detect 
-   a uncommon character in the greek text (by comparing its 
-   result with the greedy result).
-*/
 /// The function gives the core text of a greek new testament critical edition.  
-///It might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
+/// It might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
 ///
-/// Note on this function : 
-/// - it does not replace nomina sacras (e.g., κϲ) by their non-abreviated form (resp. κυριοϲ), nor words (e.g., κύριος) by their nomina sacras form (when a nomina sacra form exists) (resp. κϲ).
-/// - it is made to delete any character used to encode nomina sacras (e.g., '|', or '(' and ')'), hence |κς| will give κϲ.
+/// In concrete terms, it remove diacritic signs, change nu bars to nu letter, remove any character that is not in the greek alphabet, change all sigmas to lunar sigma, and puts all greek letters in lowercase.
+///
+/// Also, this function : 
+/// - does not replace nomina sacras (e.g., κϲ) by their non-abreviated form (resp. κυριοϲ), nor words (e.g., κύριος) by their nomina sacras form (when a nomina sacra form exists) (resp. κϲ).
+/// - is made to delete any character used to encode nomina sacras (e.g., '|', or '(' and ')'), hence |κς| will give κϲ.
 /// # Example : 
 /// ```
 /// use gnt_tools::core_text;
 ///
-/// let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
+/// let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
 ///          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
 ///          καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
 ///          οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
@@ -48,8 +44,8 @@ use unicode_normalization::UnicodeNormalization;
 /// ```
 pub fn core_text(mut s : String) -> String {
 
-    // We remove diacritics signs. Doing it now avoids the greedy 
-    // format to remove some greek letters (the accentued ones).
+    // We remove diacritics signs. Doing it now avoids the greedy_format 
+    // function to remove some greek letters (the accentued ones).
     const LEN: usize = '\u{036f}' as usize - '\u{0300}' as usize;
     let mut arr = ['\0'; LEN];
     for (item, ch) in std::iter::zip(&mut arr, '\u{0300}'..='\u{036f}') {
@@ -93,7 +89,7 @@ mod tests {
     #[test]
     fn test_core_text() {
    
-        let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
+        let s = "16 Εἶπεν δὲ παραβολὴˉ πρὸς αὐτοὺς λέγων·
             ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
             καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
             οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";

@@ -4,7 +4,7 @@ version = "0.1.1"
 edition = "2021"
 authors = ["G.T.L. Berloty"]
 license = "CC-BY-NC-4.0"
-description = "A crate designed to be a tool box for studying the greek new testament. The crate is provided AS-IS."
+description = "Tools to help studying the greek new testament. The crate is provided AS-IS."
 
 [dependencies]
 unicode-normalization = "0.1.24"
