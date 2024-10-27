@@ -1,0 +1,10 @@
+[package]
+name = "gnt-tools"
+version = "0.1.0"
+edition = "2021"
+authors = ["G.T.L. Berloty"]
+license = "CC-BY-NC-4.0"
+description = "This crate has been created in order to be a tool box for studying the greek new testament. The crate is provided AS-IS."
+
+[dependencies]
+unicode-normalization = "0.1.24"
