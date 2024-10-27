@@ -1,6 +1,6 @@
 [package]
 name = "gnt-tools"
-version = "0.2.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["G.T.L. Berloty"]
 license = "CC-BY-NC-4.0"
