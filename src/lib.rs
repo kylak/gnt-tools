@@ -22,7 +22,7 @@ use unicode_normalization::UnicodeNormalization;
 /// The function gives the core text of a greek new testament critical edition.  
 /// It might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
 ///
-/// In concrete terms, it remove diacritic signs, remove any character that is not in the greek alphabet, change all sigmas to lunar sigma, and puts all greek letters in lowercase.
+/// In concrete terms, it remove diacritic signs, remove any character that is not in the greek alphabet, puts all greek letters in lowercase, and change all sigmas to lunar sigma.
 ///
 /// So this function : 
 /// - does not replace nomina sacras (e.g., κϲ) by their non-abreviated form (resp. κυριοϲ), nor words (e.g., κύριος) by their nomina sacras form (when a nomina sacra form exists) (resp. κϲ).
