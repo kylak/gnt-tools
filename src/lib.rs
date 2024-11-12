@@ -1,4 +1,4 @@
-/! Tools to help studying the greek new testament.
+//! Tools to help studying the greek new testament.
 //! The crate is provided AS-IS.
 //! # Examples
 //!
@@ -106,12 +106,12 @@ mod tests {
        https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-normalize-in-a-python-unicode-string
 
        https://crates.io/crates/hebrew_unicode_utils
-    
+
        Tester fonctionnalite :
         - (1) qu'il n'y ait plus d'accentuations
         - (2) qu'il n'y ait plus de majuscules
         - (3) qu'il n'y ait plus de sigma autre que le lunaire
-        - (4) qu'il n'y ait pas d'autre caractere que les 
+        - (4) qu'il n'y ait pas d'autre caractere que les
           caracteres alphabetique grec.
        Tester une combinaison de deux :
         - (1) et (2)
@@ -135,6 +135,6 @@ mod tests {
           - (1.3) que sur des caractere accentues - deux unicodes
           - (1.3) que sur des caracteres non accentues
           - (1.4) que sur une chaine ayant des caracteres accentues et non accentues
-          
+
     */
 }
