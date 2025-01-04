@@ -43,6 +43,34 @@ use unicode_normalization::UnicodeNormalization;
 ///
 /// assert_eq!(core_text(String::from(s)), String::from(s2));
 /// ```
+
+/*
+pub fn core_char(c: &char) -> Option<char> {
+   
+    // we use nfd in order to not remove some
+    // accentued character by accident.
+    c.nfd().reduce(|core_c, i| 
+                  
+                  // if the character is of the greek alphabet
+                  if ('α'..='ω').contains(&i) 
+                  || ('Α'..='Ω').contains(&i) 
+                  {
+                      match i {
+                          'σ' | 'ς' | 'Σ' => 'ϲ',
+                          _ => i.to_lowercase().nth(0).unwrap()
+                      }
+                  }
+                  else {
+                      core_c
+                  }
+            )
+}
+
+pub fn core_text2(s: &str) -> String {
+    s.chars().filter_map(|c| core_char(&c)).collect()
+}
+*/
+
 pub fn core_text(mut s: String) -> String {
     // We remove diacritics signs. Doing it now avoids the greedy_format
     // function to remove some greek letters (the accentued ones).
@@ -101,6 +129,22 @@ mod tests {
 
         assert_eq!(core_text(String::from(s)), String::from(s2));
     }
+   
+    /*
+    #[test]
+    fn test_core_char() {
+        let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
+            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
+            καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
+            οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
+
+        let s2 = "ειπενδεπαραβοληνπροϲαυτουϲλεγωνανθρωπουτ\
+            ινοϲπλουϲιουευφορηϲενηχωρακαιδιελογιζετοενεαυτω\
+            λεγωντιποιηϲωοτιουκεχωπουϲυναξωτουϲκαρπουϲμου";
+
+        assert_eq!(core_text2(s).as_str(), s2);
+    }
+    */
 
     /*
        https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-normalize-in-a-python-unicode-string
