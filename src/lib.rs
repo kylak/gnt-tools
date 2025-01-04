@@ -47,11 +47,8 @@ use unicode_normalization::UnicodeNormalization;
 /*
 pub fn core_char(c: &char) -> Option<char> {
    
-    // we use nfd in order to not remove some
-    // accentued character by accident.
     c.nfd().reduce(|core_c, i| 
                   
-                  // if the character is of the greek alphabet
                   if ('α'..='ω').contains(&i) 
                   || ('Α'..='Ω').contains(&i) 
                   {
@@ -66,6 +63,7 @@ pub fn core_char(c: &char) -> Option<char> {
             )
 }
 
+// Would it be better to return an Option<String> ?
 pub fn core_text2(s: &str) -> String {
     s.chars().filter_map(|c| core_char(&c)).collect()
 }
