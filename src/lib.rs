@@ -47,14 +47,14 @@ use unicode_normalization::UnicodeNormalization;
 /*
 pub fn core_char(c: &char) -> Option<char> {
    
-    c.nfd().reduce(|core_c, i| 
+    c.nfd().fold(None, |core_c, i| 
                   
                   if ('α'..='ω').contains(&i) 
                   || ('Α'..='Ω').contains(&i) 
                   {
                       match i {
-                          'σ' | 'ς' | 'Σ' => 'ϲ',
-                          _ => i.to_lowercase().nth(0).unwrap()
+                          'σ' | 'ς' | 'Σ' => Some('ϲ'),
+                          _ => i.to_lowercase().nth(0)
                       }
                   }
                   else {
@@ -127,7 +127,7 @@ mod tests {
 
         assert_eq!(core_text(String::from(s)), String::from(s2));
     }
-   
+  
     /*
     #[test]
     fn test_core_char() {
