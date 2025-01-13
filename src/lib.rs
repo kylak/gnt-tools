@@ -3,7 +3,7 @@
 //! # Examples
 //!
 //! ```
-//! use gnt_tools::core_text;
+//! use gnt_tools::core_char;
 //!
 //! let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
 //!          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17
@@ -14,23 +14,29 @@
 //!           ινοϲπλουϲιουευφορηϲενηχωρακαιδιελογιζετοενεαυτω\
 //!           λεγωντιποιηϲωοτιουκεχωπουϲυναξωτουϲκαρπουϲμου";
 //!
-//! assert_eq!(core_text(String::from(s)), String::from(s2));
+//! let core_text : String = s.chars()
+//!                           .filter_map(|c| core_char(&c))
+//!                           .collect();
+//!
+//! assert_eq!(core_text.as_str(), s2);
 //! ```
 
 use unicode_normalization::UnicodeNormalization;
 
-/// The function gives the core text of a greek new testament critical edition.  
-/// It might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
+// TODO : doc de la fonction a re-ecrire.
+/// The function helps giving the core text of a greek new testament critical edition.  
+/// This might be useful for comparing greek new testament critical editions by gettig their "core" differences/concordances.
 ///
-/// In concrete terms, it remove diacritic signs, remove any character that is not in the greek alphabet, puts all greek letters in lowercase, and change all sigmas to lunar sigma.
+/// In concrete terms, core_char remove any character that is not in the greek alphabet, puts all greek letters in lowercase, and change all sigmas to lunar sigma.
 ///
 /// So this function :
 /// - does not replace nomina sacras (e.g., κϲ) by their non-abreviated form (resp. κυριοϲ), nor words (e.g., κύριος) by their nomina sacras form (when a nomina sacra form exists) (resp. κϲ).
 /// - is made to delete any character used to encode nomina sacras (e.g., '|', or '(' and ')'), hence |κς| will give κϲ.
 /// - does delete all 'ˉ' characters (so παραβολὴˉ becomes παραβολη, not παραβολην)
+/// TODO : expliquer pourquoi on ne garde pas le point median.
 /// # Example :
 /// ```
-/// use gnt_tools::core_text;
+/// use gnt_tools::core_char;
 ///
 /// let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
 ///          ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17
@@ -41,74 +47,53 @@ use unicode_normalization::UnicodeNormalization;
 ///           ινοϲπλουϲιουευφορηϲενηχωρακαιδιελογιζετοενεαυτω\
 ///           λεγωντιποιηϲωοτιουκεχωπουϲυναξωτουϲκαρπουϲμου";
 ///
-/// assert_eq!(core_text(String::from(s)), String::from(s2));
+/// let core_text : String = s.chars()
+///                           .filter_map(|c| core_char(&c))
+///                           .collect();
+///
+/// assert_eq!(core_text.as_str(), s2);
 /// ```
-
-/*
+// - gerer les invisibles nu? [ca demandera peut-etre un changement du type de retour]
+// - todo : faire une demande a l'unicode foundation pour ajouter les caracteres grecs onciales.
+// - expliquer pourquoi on ne garde pas le point milieu
+#[inline]
 pub fn core_char(c: &char) -> Option<char> {
    
     c.nfd().fold(None, |core_c, i| 
-                  
-                  if ('α'..='ω').contains(&i) 
-                  || ('Α'..='Ω').contains(&i) 
-                  {
-                      match i {
-                          'σ' | 'ς' | 'Σ' => Some('ϲ'),
-                          _ => i.to_lowercase().nth(0)
-                      }
+                
+            // TODO : on fait quoi avec les symboles numeriques?
+
+              /* It could be interesting to check if 
+               * `('α'..='ω').contains(&i)` is faster
+               * than 'α' <= i && i <= 'ω'. */
+              
+              if 'α' <= i && i <= 'ω' 
+              || 'Α' <= i && i <= 'Ω' 
+              {
+                  match i {
+                      'σ' | 'ς' | 'Σ' => Some('ϲ'),
+                      _ => i.to_lowercase().nth(0)
                   }
-                  else {
-                      core_c
-                  }
+              }
+              else if i == ';'
+                   || 'Ͱ' > i || i > 'Ͽ'
+                   || i == '·'
+              {
+                  core_c
+              }
+              else {
+                  panic!("Greek unicode character '{i}' is \
+                  not handled. If you think it would be \
+                  relevant to handle this character, please \
+                  open an issue on our GitHub repository : \
+                  https://github.com/kylak/gnt-tools/issues.");
+              }
             )
 }
 
-// Would it be better to return an Option<String> ?
-pub fn core_text2(s: &str) -> String {
-    s.chars().filter_map(|c| core_char(&c)).collect()
-}
-*/
-
-pub fn core_text(mut s: String) -> String {
-    // We remove diacritics signs. Doing it now avoids the greedy_format
-    // function to remove some greek letters (the accentued ones).
-    const LEN: usize = '\u{036f}' as usize - '\u{0300}' as usize;
-    let mut arr = ['\0'; LEN];
-    for (item, ch) in std::iter::zip(&mut arr, '\u{0300}'..='\u{036f}') {
-        *item = ch;
-    }
-    s = s.nfd().to_string().replace(arr, "");
-
-    s = replace(s);
-    greedy_format(s.as_str())
-}
-
-fn replace(mut s: String) -> String {
-    // We remplace any "invisible nu" by a "true one". ------------------
-    // EDIT : not anymore (because it's not easy to manage), but I hope later.
-    // s = s.replace("ˉ", "ν");
-
-    // We change any uppercase letter to lowercase. ---------------------
-    s = s.to_lowercase();
-
-    // We replace every sigmas to the lunar sigma. ----------------------
-    s.replace(&['σ', 'ς'], "ϲ")
-}
-
-fn greedy_format(s: &str) -> String {
-    #[allow(non_snake_case)]
-    let S = String::from(s);
-
-    // We remove any character that is not a greek character.
-    S.chars()
-        .filter(
-            |c| {
-                *c >= '\u{03B1}' && *c <= '\u{03C9}' // lowercases
-                        || *c == '\u{03F2}'
-            }, // the lunar sigma
-        )
-        .collect::<String>()
-}
+// fonction qui donne les caracteres supprimes par core_char
+// pub fn new_char(s1, s2)
+// ca permet de pouvoir etre sur des caracteres qu'on a supprime
 
 #[cfg(test)]
 mod tests {
@@ -117,7 +102,7 @@ mod tests {
     #[test]
     fn test_core_text() {
         let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
-            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
+            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ Ͷχώρα. 17 
             καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
             οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
 
@@ -125,24 +110,12 @@ mod tests {
             ινοϲπλουϲιουευφορηϲενηχωρακαιδιελογιζετοενεαυτω\
             λεγωντιποιηϲωοτιουκεχωπουϲυναξωτουϲκαρπουϲμου";
 
-        assert_eq!(core_text(String::from(s)), String::from(s2));
-    }
-  
-    /*
-    #[test]
-    fn test_core_char() {
-        let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
-            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
-            καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
-            οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
+        let core_text : String = s.chars()
+                                  .filter_map(|c| core_char(&c))
+                                  .collect();
 
-        let s2 = "ειπενδεπαραβοληνπροϲαυτουϲλεγωνανθρωπουτ\
-            ινοϲπλουϲιουευφορηϲενηχωρακαιδιελογιζετοενεαυτω\
-            λεγωντιποιηϲωοτιουκεχωπουϲυναξωτουϲκαρπουϲμου";
-
-        assert_eq!(core_text2(s).as_str(), s2);
+         assert_eq!(core_text.as_str(), s2);
     }
-    */
 
     /*
        https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-normalize-in-a-python-unicode-string
