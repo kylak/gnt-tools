@@ -56,7 +56,6 @@ use unicode_normalization::UnicodeNormalization;
 // - gerer les invisibles nu? [ca demandera peut-etre un changement du type de retour]
 // - todo : faire une demande a l'unicode foundation pour ajouter les caracteres grecs onciales.
 // - expliquer pourquoi on ne garde pas le point milieu
-#[inline]
 pub fn core_char(c: &char) -> Option<char> {
    
     c.nfd().fold(None, |core_c, i| 
@@ -102,7 +101,7 @@ mod tests {
     #[test]
     fn test_core_text() {
         let s = "16 Εἶπεν δὲ παραβολὴν πρὸς αὐτοὺς λέγων·
-            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ Ͷχώρα. 17 
+            ἀνθρώπου τινὸς πλουσίου εὐφόρησεν ἡ χώρα. 17 
             καὶ διελογίζετο ἐν ἑαυτῷ λέγων· τί ποιήσω, ὅτι 
             οὐκ ἔχω ποῦ συνάξω τοὺς καρπούς μου; ";
 

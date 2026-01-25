@@ -10,6 +10,8 @@ keyword = ["greek-new-testament", "bible", "Jesus", "uncial", "greek"]
 categories = ["command-line-interface", "algorithms", "command-line-utilities"]
 
 [dependencies]
+anyhow = "1.0.100"
+clap = { version = "4.5.54", features = ["derive"] }
 unicode-normalization = "0.1.24"
 
 [dev-dependencies]
@@ -18,3 +20,6 @@ criterion = "0.3"
 [[bench]]
 name = "benchmark"
 harness = false
+
+[[bin]]
+name = "gnt-tools"
