@@ -1,7 +1,7 @@
 [package]
 name = "gnt-tools"
 version = "0.3.0"
-edition = "2021"
+edition = "2024"
 authors = ["G.T.L. Berloty"]
 license = "CC-BY-NC-4.0"
 description = "Tools to help studying the greek new testament. The crate is provided AS-IS."
@@ -15,7 +15,7 @@ clap = { version = "4.5.54", features = ["derive"] }
 unicode-normalization = "0.1.24"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.8.1"
 
 [[bench]]
 name = "benchmark"

@@ -1,4 +1,3 @@
-use std::env;
 use clap::{Parser, ArgGroup};
 use std::path::PathBuf;
 use std::fs;
